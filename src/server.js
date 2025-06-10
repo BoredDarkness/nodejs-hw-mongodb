@@ -3,6 +3,9 @@ import cors from 'cors';
 import pinoHttp from 'pino-http';
 import dotenv from 'dotenv';
 import { listContacts, getContact } from './controllers/contacts.js';
+import contactsRouter from './routers/contacts.js';
+import notFoundHandler from './middlewares/notFoundHandler.js';
+import errorHandler from './middlewares/errorHandler.js';
 
 dotenv.config();
 

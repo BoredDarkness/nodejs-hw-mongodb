@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import pinoHttp from 'pino-http';
 import dotenv from 'dotenv';
-import { listContacts, getContact } from './controllers/contacts.js';
+//import { listContacts, getContact } from './controllers/contacts.js';//
 import contactsRouter from './routers/contacts.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
 import errorHandler from './middlewares/errorHandler.js';
@@ -16,26 +16,15 @@ export function setupServer() {
   app.use(express.json());
   app.use(pinoHttp());
 
+  app.use(pinoHttp());
+
   app.get('/', (_, res) => {
     res.json({ message: 'API is up and running!' });
   });
 
-  app.get('/contacts', listContacts);
-  app.get('/contacts/:contactId', getContact);
-
-  app.get('/', (_, res) => res.json({ message: 'API is up and running!' }));
-
   app.use('/contacts', contactsRouter);
 
-  app.use((req, res) => res.status(404).json({ message: 'Not found' }));
-
   app.use(notFoundHandler);
-
-  app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(500).json({ message: 'Internal Server Error' });
-  });
-
   app.use(errorHandler);
 
   const PORT = process.env.PORT || 3000;

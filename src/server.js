@@ -23,14 +23,20 @@ export function setupServer() {
   app.get('/contacts', listContacts);
   app.get('/contacts/:contactId', getContact);
 
-  app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' });
-  });
+  app.get('/', (_, res) => res.json({ message: 'API is up and running!' }));
+
+  app.use('/contacts', contactsRouter);
+
+  app.use((req, res) => res.status(404).json({ message: 'Not found' }));
+
+  app.use(notFoundHandler);
 
   app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
   });
+
+  app.use(errorHandler);
 
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {

@@ -1,22 +1,30 @@
-import { getAllContacts, getContactById } from '../services/contacts.js';
 import createError from 'http-errors';
-import { addContact } from '../services/contacts.js';
-import { patchContact } from '../services/contacts.js';
-import { removeContact } from '../services/contacts.js';
+import {
+  getAllContacts,
+  getContactById,
+  addContact,
+  patchContact,
+  removeContact,
+} from '../services/contacts.js';
 
 export async function listContacts(req, res, next) {
-  try {
-    const contacts = await getAllContacts();
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+  const { page, perPage, sortBy, sortOrder, type, isFavourite } = req.query;
 
+  const result = await getAllContacts({
+    page: Number(page) || 1,
+    perPage: Number(perPage) || 10,
+    sortBy,
+    sortOrder,
+    type,
+    isFavourite,
+  });
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: result,
+  });
+}
 export async function getContact(req, res, next) {
   try {
     const { contactId } = req.params;
@@ -34,11 +42,8 @@ export async function getContact(req, res, next) {
   }
 }
 
-export async function createContact(req, res, next) {
+export async function createContact(req, res) {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
-  if (!name || !phoneNumber || !contactType) {
-    throw createError(400, 'Missing required fields');
-  }
   const contact = await addContact({
     name,
     phoneNumber,
@@ -53,10 +58,9 @@ export async function createContact(req, res, next) {
   });
 }
 
-export async function updateContact(req, res, next) {
+export async function updateContact(req, res) {
   const { contactId } = req.params;
-  const data = req.body;
-  const updated = await patchContact(contactId, data);
+  const updated = await patchContact(contactId, req.body);
   if (!updated) {
     throw createError(404, 'Contact not found');
   }
@@ -67,7 +71,7 @@ export async function updateContact(req, res, next) {
   });
 }
 
-export async function deleteContact(req, res, next) {
+export async function deleteContact(req, res) {
   const { contactId } = req.params;
   const deleted = await removeContact(contactId);
   if (!deleted) {

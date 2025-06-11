@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
+import { registerSchema, loginSchema } from '../models/authSchemas.js';
 import {
   registerController,
   loginController,
   refreshController,
   logoutController,
 } from '../controllers/auth.js';
-import { registerSchema, loginSchema } from '../models/authSchemas.js';
 
 const router = Router();
 

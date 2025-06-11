@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 
 const contactSchema = new Schema(
   {
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     email: { type: String },
@@ -13,9 +14,7 @@ const contactSchema = new Schema(
       required: true,
     },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
 export const Contact = model('Contact', contactSchema);

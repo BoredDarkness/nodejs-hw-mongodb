@@ -2,6 +2,12 @@ import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
 import { isValidId } from '../utils/isValidId.js';
+
+import {
+  createContactSchema,
+  updateContactSchema,
+} from '../models/contactSchemas.js';
+
 import {
   listContacts,
   getContact,
@@ -9,10 +15,6 @@ import {
   updateContact,
   deleteContact,
 } from '../controllers/contacts.js';
-import {
-  createContactSchema,
-  updateContactSchema,
-} from '../models/contactSchemas.js';
 
 const router = Router();
 

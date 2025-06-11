@@ -1,9 +1,13 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-const { MONGODB_URL } = process.env;
+dotenv.config();
 
-if (!MONGODB_URL) {
-  console.error('MONGODB_URI is not defined in .env');
+const { MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB } = process.env;
+if (!MONGODB_USER || !MONGODB_PASSWORD || !MONGODB_URL || !MONGODB_DB) {
+  console.error(
+    'Missing: MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB',
+  );
   process.exit(1);
 }
 

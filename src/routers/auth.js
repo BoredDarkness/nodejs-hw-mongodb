@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
@@ -10,6 +11,23 @@ import {
 } from '../controllers/auth.js';
 
 const router = Router();
+
+router.post(
+  '/send-reset-email',
+  validateBody(Joi.object({ email: Joi.string().email().required() })),
+  ctrlWrapper(sendResetEmailController),
+);
+
+router.post(
+  '/reset-pwd',
+  validateBody(
+    Joi.object({
+      token: Joi.string().required(),
+      password: Joi.string().min(6).required(),
+    }),
+  ),
+  ctrlWrapper(resetPasswordController),
+);
 
 router.post(
   '/register',

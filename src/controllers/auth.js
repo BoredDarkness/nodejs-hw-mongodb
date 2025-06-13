@@ -14,26 +14,35 @@ const REFRESH_TTL = 30 * 24 * 60 * 60 * 1000;
 export async function registerController(req, res) {
   const { name, email, password } = req.body;
   const existing = await User.findOne({ email });
-  if (existing) throw createError(409, 'Email in use');
+  if (existing) {
+    throw createError(409, 'Email in use');
+  }
 
   const hash = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email, password: hash });
 
-  const userData = { _id: user._id, name: user.name, email: user.email };
   res.status(201).json({
     status: 201,
     message: 'Successfully registered a user!',
-    data: userData,
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    },
   });
 }
 
 export async function loginController(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user) throw createError(401, 'Email or password is wrong');
+  if (!user) {
+    throw createError(401, 'Email or password is wrong');
+  }
 
   const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) throw createError(401, 'Email or password is wrong');
+  if (!isValid) {
+    throw createError(401, 'Email or password is wrong');
+  }
 
   await deleteSessionByUserId(user._id);
 
@@ -63,12 +72,17 @@ export async function loginController(req, res) {
 
 export async function refreshController(req, res) {
   const { refreshToken } = req.cookies;
-  if (!refreshToken) throw createError(401, 'No refresh token');
+  if (!refreshToken) {
+    throw createError(401, 'Not authorized');
+  }
 
   const session = await findSessionByRefreshToken(refreshToken);
-  if (!session) throw createError(401, 'Invalid refresh token');
-  if (session.refreshTokenValidUntil < new Date())
+  if (!session) {
+    throw createError(401, 'Not authorized');
+  }
+  if (session.refreshTokenValidUntil < new Date()) {
     throw createError(401, 'Refresh token expired');
+  }
 
   await session.deleteOne();
 
@@ -97,10 +111,13 @@ export async function refreshController(req, res) {
 }
 
 export async function logoutController(req, res) {
-  const { refreshToken } = req.cookies;
-  if (refreshToken) {
-    await deleteSessionByUserId(req.user._id);
-    res.clearCookie('refreshToken');
+  if (!req.user) {
+    throw createError(401, 'Not authorized');
   }
+
+  await deleteSessionByUserId(req.user._id);
+
+  res.clearCookie('refreshToken');
+
   res.status(204).send();
 }

@@ -17,6 +17,7 @@ export async function listContacts(req, res) {
     type: req.query.type,
     isFavourite: req.query.isFavourite,
   });
+
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
@@ -26,8 +27,10 @@ export async function listContacts(req, res) {
 
 export async function getContact(req, res) {
   const { contactId } = req.params;
-  const contact = await getContactById(contactId, req.user._1d);
-  if (!contact) throw createError(404, 'Contact not found');
+  const contact = await getContactById(contactId, req.user._id);
+  if (!contact) {
+    throw createError(404, 'Contact not found');
+  }
   res.status(200).json({
     status: 200,
     message: `Successfully found contact with id ${contactId}!`,
@@ -45,12 +48,11 @@ export async function createContact(req, res) {
 }
 
 export async function updateContact(req, res) {
-  const updated = await patchContact(
-    req.params.contactId,
-    req.body,
-    req.user._id,
-  );
-  if (!updated) throw createError(404, 'Contact not found');
+  const { contactId } = req.params;
+  const updated = await patchContact(contactId, req.body, req.user._id);
+  if (!updated) {
+    throw createError(404, 'Contact not found');
+  }
   res.status(200).json({
     status: 200,
     message: 'Successfully patched a contact!',
@@ -59,7 +61,10 @@ export async function updateContact(req, res) {
 }
 
 export async function deleteContact(req, res) {
-  const deleted = await removeContact(req.params.contactId, req.user._id);
-  if (!deleted) throw createError(404, 'Contact not found');
+  const { contactId } = req.params;
+  const deleted = await removeContact(contactId, req.user._id);
+  if (!deleted) {
+    throw createError(404, 'Contact not found');
+  }
   res.status(204).send();
 }

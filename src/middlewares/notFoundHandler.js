@@ -1,5 +1,5 @@
 import createError from 'http-errors';
 
 export default (req, res, next) => {
-  next(createError(404, 'Route not found'));
+  next(createError(404, 'Not found'));
 };

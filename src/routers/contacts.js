@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
 import { isValidId } from '../utils/isValidId.js';
+import authentificate from '../middlewares/authentificate.js';
 
 import {
   createContactSchema,
@@ -17,6 +18,7 @@ import {
 } from '../controllers/contacts.js';
 
 const router = Router();
+router.use(authentificate);
 
 router.get('/', ctrlWrapper(listContacts));
 router.get('/:contactId', isValidId, ctrlWrapper(getContact));

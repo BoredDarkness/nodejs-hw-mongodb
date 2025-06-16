@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
-import createError from 'http-errors';
+import createHttpError from 'http-errors';
 import { nanoid } from 'nanoid';
+
 import { User } from '../models/user.js';
 import {
   createSession,
@@ -15,7 +16,7 @@ export async function registerController(req, res) {
   const { name, email, password } = req.body;
   const existing = await User.findOne({ email });
   if (existing) {
-    throw createError(409, 'Email in use');
+    throw createHttpError(409, 'Email in use');
   }
 
   const hash = await bcrypt.hash(password, 10);
@@ -35,14 +36,10 @@ export async function registerController(req, res) {
 export async function loginController(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user) {
-    throw createError(401, 'Email or password is wrong');
-  }
+  if (!user) throw createHttpError(401, 'Email or password is wrong');
 
   const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) {
-    throw createError(401, 'Email or password is wrong');
-  }
+  if (!isValid) throw createHttpError(401, 'Email or password is wrong');
 
   await deleteSessionByUserId(user._id);
 
@@ -72,16 +69,12 @@ export async function loginController(req, res) {
 
 export async function refreshController(req, res) {
   const { refreshToken } = req.cookies;
-  if (!refreshToken) {
-    throw createError(401, 'Not authorized');
-  }
+  if (!refreshToken) throw createHttpError(401, 'Not authorized');
 
   const session = await findSessionByRefreshToken(refreshToken);
-  if (!session) {
-    throw createError(401, 'Not authorized');
-  }
+  if (!session) throw createHttpError(401, 'Not authorized');
   if (session.refreshTokenValidUntil < new Date()) {
-    throw createError(401, 'Refresh token expired');
+    throw createHttpError(401, 'Refresh token expired');
   }
 
   await session.deleteOne();
@@ -111,13 +104,7 @@ export async function refreshController(req, res) {
 }
 
 export async function logoutController(req, res) {
-  if (!req.user) {
-    throw createError(401, 'Not authorized');
-  }
-
   await deleteSessionByUserId(req.user._id);
-
   res.clearCookie('refreshToken');
-
   res.status(204).send();
 }

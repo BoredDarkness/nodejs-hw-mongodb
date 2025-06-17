@@ -104,7 +104,17 @@ export async function refreshController(req, res) {
 }
 
 export async function logoutController(req, res) {
-  await deleteSessionByUserId(req.user._id);
+  const { refreshToken } = req.cookies;
+  if (!refreshToken) {
+    throw createHttpError(401, 'Not authorized');
+  }
+
+  const session = await findSessionByRefreshToken(refreshToken);
+  if (session) {
+    await session.deleteOne();
+  }
+
   res.clearCookie('refreshToken');
+
   res.status(204).send();
 }

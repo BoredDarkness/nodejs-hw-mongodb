@@ -2,7 +2,6 @@ import { Router } from 'express';
 import Joi from 'joi';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
-import authentificate from '../middlewares/authentificate.js';
 
 import {
   registerController,
@@ -38,6 +37,6 @@ router.post(
 
 router.post('/refresh', ctrlWrapper(refreshController));
 
-router.post('/logout', authentificate, ctrlWrapper(logoutController));
+router.post('/logout', ctrlWrapper(logoutController));
 
 export default router;

@@ -1,4 +1,5 @@
-import createError from 'http-errors';
+import createHttpError from 'http-errors';
+import cloudinary from '../config/cloudinary.js';
 import {
   getAllContacts,
   getContactById,
@@ -8,17 +9,17 @@ import {
 } from '../services/contacts.js';
 
 export async function listContacts(req, res) {
+  const { page, perPage, sortBy, sortOrder, type, isFavourite } = req.query;
   const result = await getAllContacts({
     userId: req.user._id,
-    page: Number(req.query.page) || 1,
-    perPage: Number(req.query.perPage) || 10,
-    sortBy: req.query.sortBy,
-    sortOrder: req.query.sortOrder,
-    type: req.query.type,
-    isFavourite: req.query.isFavourite,
+    page: Number(page) || 1,
+    perPage: Number(perPage) || 10,
+    sortBy,
+    sortOrder,
+    type,
+    isFavourite,
   });
-
-  res.status(200).json({
+  res.json({
     status: 200,
     message: 'Successfully found contacts!',
     data: result,
@@ -26,20 +27,28 @@ export async function listContacts(req, res) {
 }
 
 export async function getContact(req, res) {
-  const { contactId } = req.params;
-  const contact = await getContactById(contactId, req.user._id);
-  if (!contact) {
-    throw createError(404, 'Contact not found');
-  }
-  res.status(200).json({
+  const contact = await getContactById(req.params.contactId, req.user._id);
+  if (!contact) throw createHttpError(404, 'Contact not found');
+  res.json({
     status: 200,
-    message: `Successfully found contact with id ${contactId}!`,
+    message: `Successfully found contact with id ${req.params.contactId}!`,
     data: contact,
   });
 }
 
 export async function createContact(req, res) {
-  const contact = await addContact(req.body, req.user._id);
+  const data = { ...req.body, userId: req.user._id };
+  if (req.file) {
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'contacts' },
+        (err, file) => (err ? reject(err) : resolve(file)),
+      );
+      stream.end(req.file.buffer);
+    });
+    data.photo = uploadResult.secure_url;
+  }
+  const contact = await addContact(data, req.user._id);
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
@@ -48,23 +57,32 @@ export async function createContact(req, res) {
 }
 
 export async function updateContact(req, res) {
-  const { contactId } = req.params;
-  const updated = await patchContact(contactId, req.body, req.user._id);
-  if (!updated) {
-    throw createError(404, 'Contact not found');
+  const updates = { ...req.body };
+  if (req.file) {
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'contacts' },
+        (err, file) => (err ? reject(err) : resolve(file)),
+      );
+      stream.end(req.file.buffer);
+    });
+    updates.photo = uploadResult.secure_url;
   }
-  res.status(200).json({
+  const contact = await patchContact(
+    req.params.contactId,
+    updates,
+    req.user._id,
+  );
+  if (!contact) throw createHttpError(404, 'Contact not found');
+  res.json({
     status: 200,
     message: 'Successfully patched a contact!',
-    data: updated,
+    data: contact,
   });
 }
 
 export async function deleteContact(req, res) {
-  const { contactId } = req.params;
-  const deleted = await removeContact(contactId, req.user._id);
-  if (!deleted) {
-    throw createError(404, 'Contact not found');
-  }
+  const contact = await removeContact(req.params.contactId, req.user._id);
+  if (!contact) throw createHttpError(404, 'Contact not found');
   res.status(204).send();
 }

@@ -1,0 +1,31 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Contacts API
+  description: Backend for managing users and their contacts.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: Auth
+    description: Endpoints for user registration, login, reset password
+  - name: Contacts
+    description: CRUD operations on contacts
+servers:
+  - url: http://localhost:3000
+  - url: https://<your-deployed-url>
+paths:
+  $ref: '../swagger/paths.yaml'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      components:
+  schemas:
+    Contact:
+      $ref: '../swagger/components/schemas/contact.yaml#/Contact'
+    ContactInput:
+      $ref: '../swagger/components/schemas/contact-input.yaml#/ContactInput'
+    Error:
+      $ref: '../swagger/components/schemas/error.yaml#/Error'

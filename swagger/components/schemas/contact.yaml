@@ -1,0 +1,19 @@
+type: object
+properties:
+  status:
+    type: integer
+  message:
+    type: string
+  data:
+    type: object
+    properties:
+      _id: { type: string }
+      userId: { type: string }
+      name: { type: string }
+      phoneNumber: { type: string }
+      email: { type: string, nullable: true }
+      isFavourite: { type: boolean }
+      contactType: { type: string }
+      photo: { type: string, nullable: true }
+      createdAt: { type: string }
+      updatedAt: { type: string }

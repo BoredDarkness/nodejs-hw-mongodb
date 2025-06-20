@@ -1,0 +1,17 @@
+post:
+  tags:
+    - Auth
+  summary: Log out user
+  operationId: logoutUser
+  description: Log out current user by deleting session and clearing cookie.
+  security:
+    - bearerAuth: []
+  responses:
+    '204':
+      description: Successfully logged out (no content)
+    '401':
+      description: Not authorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

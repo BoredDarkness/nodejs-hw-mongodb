@@ -1,8 +1,11 @@
 import { Router } from 'express';
-import { validateBody } from '../middlewares/validateBody.js';
-import { authenticate } from '../middlewares/authenticate.js';
+import { validateBody } from '../utils/validateBody.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { contactSchemas } from '../utils/schemas.js';
+import authentificate from '../middlewares/authentificate.js';
+import {
+  createContactSchema,
+  updateContactSchema,
+} from '../models/contactSchemas.js';
 import {
   listContacts,
   getContact,
@@ -12,20 +15,20 @@ import {
 } from '../controllers/contacts.js';
 
 const router = Router();
-router.use(authenticate);
+
+router.use(authentificate);
 
 router.get('/', ctrlWrapper(listContacts));
 router.get('/:id', ctrlWrapper(getContact));
-router.post(
-  '/',
-  validateBody(contactSchemas.create),
-  ctrlWrapper(createContact),
-);
+
+router.post('/', validateBody(createContactSchema), ctrlWrapper(createContact));
+
 router.patch(
   '/:id',
-  validateBody(contactSchemas.update),
+  validateBody(updateContactSchema),
   ctrlWrapper(updateContact),
 );
+
 router.delete('/:id', ctrlWrapper(deleteContact));
 
 export default router;

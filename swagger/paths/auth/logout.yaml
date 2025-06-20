@@ -1,11 +1,8 @@
 post:
   tags:
     - Auth
-  summary: Log out user
+  summary: Log out current user
   operationId: logoutUser
-  description: Log out current user by deleting session and clearing cookie.
-  security:
-    - bearerAuth: []
   responses:
     '204':
       description: Successfully logged out (no content)
@@ -14,4 +11,4 @@ post:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'

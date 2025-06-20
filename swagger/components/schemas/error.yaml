@@ -1,8 +1,13 @@
-type: object
-properties:
-  status:
-    type: integer
-  message:
-    type: string
-  data:
-    type: string
+Error:
+  type: object
+  required:
+    - status
+    - message
+  properties:
+    status:
+      type: integer
+    message:
+      type: string
+    data:
+      type: string
+      nullable: true

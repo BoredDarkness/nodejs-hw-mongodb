@@ -1,20 +1,29 @@
-type: object
-required:
-  - name
-  - phoneNumber
-  - contactType
-properties:
-  name:
-    type: string
-  phoneNumber:
-    type: string
-  email:
-    type: string
-  isFavourite:
-    type: boolean
-  contactType:
-    type: string
-    enum:
-      - work
-      - home
-      - personal
+ContactInput:
+  type: object
+  required:
+    - name
+    - phoneNumber
+    - contactType
+  properties:
+    name:
+      type: string
+      minLength: 3
+      maxLength: 20
+    phoneNumber:
+      type: string
+      minLength: 3
+      maxLength: 20
+    email:
+      type: string
+      format: email
+      nullable: true
+    isFavourite:
+      type: boolean
+      default: false
+    contactType:
+      type: string
+      enum:
+        - work
+        - home
+        - personal
+      default: personal

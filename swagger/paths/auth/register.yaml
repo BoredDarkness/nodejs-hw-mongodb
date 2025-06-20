@@ -3,56 +3,22 @@ post:
     - Auth
   summary: Register a new user
   operationId: registerUser
-  description: Create a new user with name, email and password.
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          type: object
-          required:
-            - name
-            - email
-            - password
-          properties:
-            name:
-              type: string
-            email:
-              type: string
-              format: email
-            password:
-              type: string
-              minLength: 6
+          $ref: '../../components/schemas/user.yaml#/UserInput'
   responses:
     '201':
-      description: Successfully registered a user!
+      description: Successfully registered
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 201
-              message:
-                type: string
-                example: Successfully registered a user!
-              data:
-                type: object
-                properties:
-                  _id:
-                    type: string
-                  name:
-                    type: string
-                  email:
-                    type: string
-                  createdAt:
-                    type: string
-                  updatedAt:
-                    type: string
+            $ref: '../../components/schemas/user.yaml#/User'
     '409':
-      description: Email already in use
+      description: Email in use
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '../../components/schemas/error.yaml#/Error'

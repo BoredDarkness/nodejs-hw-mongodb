@@ -1,273 +1,30 @@
 openapi: 3.1.0
 info:
+  version: 1.0.0
   title: Contacts API
-  version: '1.0.0'
   description: Backend for managing users and their contacts.
   license:
     name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0.html
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
 
 servers:
   - url: http://localhost:3000
+  - url: https://<your-deployed-url>
+
+tags:
+  - name: Auth
+    description: Endpoints for registration, login, refresh, logout
+  - name: Contacts
+    description: CRUD operations on contacts
+
+paths:
+  $ref: '../swagger/paths.yaml'
 
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+
   schemas:
-    Register:
-      type: object
-      required: [name,email,password]
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-    Login:
-      type: object
-      required: [email,password]
-      properties:
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-    TokenResponse:
-      type: object
-      properties:
-        accessToken:
-          type: string
-    Contact:
-      type: object
-      properties:
-        _id:   { type: string }
-        userId:{ type: string }
-        name:  { type: string }
-        phoneNumber:{ type: string }
-        email: { type: string, nullable: true }
-        isFavourite:{ type: boolean }
-        contactType:{ type: string, enum: [work,home,personal] }
-        photo: { type: string, nullable: true}
-        createdAt:{ type: string, format: date-time }
-        updatedAt:{ type: string, format: date-time }
-    ContactInput:
-      type: object
-      required: [name,phoneNumber,contactType]
-      properties:
-        name:        { type: string }
-        phoneNumber: { type: string }
-        email:       { type: string, nullable: true }
-        isFavourite: { type: boolean, default: false }
-        contactType: { type: string, enum: [work,home,personal] }
-    Error:
-      type: object
-      required: [status,message]
-      properties:
-        status:  { type: integer }
-        message: { type: string }
-        data:    { type: string, nullable: true }
-
-tags:
-  - name: Auth
-    description: Endpoints for registration/login/refresh/logout
-  - name: Contacts
-    description: CRUD operations on contacts
-
-paths:
-  /auth/register:
-    post:
-      tags: [Auth]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Register'
-      responses:
-        '201':
-          description: Successfully registered a user!
-        '409':
-          description: Email in use
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /auth/login:
-    post:
-      tags: [Auth]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Login'
-      responses:
-        '200':
-          description: Successfully logged in a user!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenResponse'
-        '401':
-          description: Not authorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /auth/refresh:
-    post:
-      tags: [Auth]
-      responses:
-        '200':
-          description: Successfully refreshed a session!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenResponse'
-        '401':
-          description: Invalid refresh token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /auth/logout:
-    post:
-      tags: [Auth]
-      responses:
-        '204':
-          description: Successfully logged out
-        '401':
-          description: Not authorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /contacts:
-    get:
-      tags: [Contacts]
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: query
-          name: page
-          schema: { type: integer, default: 1 }
-        - in: query
-          name: perPage
-          schema: { type: integer, default: 10 }
-        - in: query
-          name: sortBy
-          schema: { type: string }
-        - in: query
-          name: sortOrder
-          schema: { type: string, enum: [asc,desc], default: asc }
-        - in: query
-          name: type
-          schema: { type: string, enum: [work,home,personal] }
-        - in: query
-          name: isFavourite
-          schema: { type: boolean }
-      responses:
-        '200':
-          description: Successfully found contacts!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Contact'
-                  page:       { type: integer }
-                  perPage:    { type: integer }
-                  totalItems: { type: integer }
-                  totalPages: { type: integer }
-                  hasPreviousPage: { type: boolean }
-                  hasNextPage:     { type: boolean }
-        '401':
-          $ref: '#/components/schemas/Error'
-
-    post:
-      tags: [Contacts]
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ContactInput'
-      responses:
-        '201':
-          description: Successfully created a contact!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Contact'
-        '401':
-          $ref: '#/components/schemas/Error'
-
-  /contacts/{id}:
-    parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: string
-    get:
-      tags: [Contacts]
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Successfully found contact!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Contact'
-        '404':
-          $ref: '#/components/schemas/Error'
-        '401':
-          $ref: '#/components/schemas/Error'
-
-    patch:
-      tags: [Contacts]
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ContactInput'
-      responses:
-        '200':
-          description: Successfully patched a contact!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Contact'
-        '404':
-          $ref: '#/components/schemas/Error'
-        '401':
-          $ref: '#/components/schemas/Error'
-
-    delete:
-      tags: [Contacts]
-      security:
-        - bearerAuth: []
-      responses:
-        '204':
-          description: Successfully deleted
-        '404':
-          $ref: '#/components/schemas/Error'
-        '401':
-          $ref: '#/components/schemas/Error'
+    $ref: '../swagger/components/schemas/index.yaml'

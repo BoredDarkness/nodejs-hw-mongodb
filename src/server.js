@@ -1,13 +1,19 @@
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 import pinoHttp from 'pino-http';
 import cookieParser from 'cookie-parser';
-
 import authRouter from './routers/auth.js';
 import contactsRouter from './routers/contacts.js';
 
 import notFoundHandler from './middlewares/notFoundHandler.js';
 import errorHandler from './middlewares/errorHandler.js';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const swaggerDocument = JSON.parse(
+  readFileSync(join(process.cwd(), 'docs', 'swagger.json'), 'utf-8'),
+);
 
 export function setupServer() {
   const app = express();
@@ -19,6 +25,8 @@ export function setupServer() {
 
   app.use('/auth', authRouter);
   app.use('/contacts', contactsRouter);
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

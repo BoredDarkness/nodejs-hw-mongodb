@@ -1,15 +1,8 @@
 import { Router } from 'express';
-import { upload } from '../utils/upload.js';
-import authentificate from '../middlewares/authentificate.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import { authenticate } from '../middlewares/authenticate.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { validateBody } from '../utils/validateBody.js';
-import { isValidId } from '../utils/isValidId.js';
-
-import {
-  createContactSchema,
-  updateContactSchema,
-} from '../models/contactSchemas.js';
-
+import { contactSchemas } from '../utils/schemas.js';
 import {
   listContacts,
   getContact,
@@ -19,23 +12,20 @@ import {
 } from '../controllers/contacts.js';
 
 const router = Router();
-router.use(authentificate);
+router.use(authenticate);
 
 router.get('/', ctrlWrapper(listContacts));
-router.get('/:contactId', isValidId, ctrlWrapper(getContact));
+router.get('/:id', ctrlWrapper(getContact));
 router.post(
   '/',
-  upload.single('photo'),
-  validateBody(createContactSchema),
+  validateBody(contactSchemas.create),
   ctrlWrapper(createContact),
 );
 router.patch(
-  '/:contactId',
-  isValidId,
-  upload.single('photo'),
-  validateBody(updateContactSchema),
+  '/:id',
+  validateBody(contactSchemas.update),
   ctrlWrapper(updateContact),
 );
-router.delete('/:contactId', isValidId, ctrlWrapper(deleteContact));
+router.delete('/:id', ctrlWrapper(deleteContact));
 
 export default router;

@@ -3,13 +3,25 @@ post:
     - Auth
   summary: Refresh access token
   operationId: refreshToken
-  # Note: refresh token is taken from HttpOnly cookie
+
   responses:
     '200':
       description: Successfully refreshed a session!
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/auth.yaml#/TokenResponse'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: 'Successfully refreshed a session!'
+              data:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
     '401':
       $ref: '../../components/schemas/error.yaml#/Error'

@@ -1,10 +1,13 @@
 patch:
-  tags: [Contacts]
+  tags:
+    - Contacts
   summary: Update a contact by ID
   operationId: updateContact
+  security:
+    - bearerAuth: []
   parameters:
-    - name: contactId
-      in: path
+    - in: path
+      name: contactId
       required: true
       schema:
         type: string
@@ -16,7 +19,7 @@ patch:
           $ref: '../../../components/schemas/contact-input.yaml#/ContactInput'
   responses:
     '200':
-      description: Successfully updated contact
+      description: Successfully patched a contact!
       content:
         application/json:
           schema:
@@ -27,10 +30,12 @@ patch:
                 example: 200
               message:
                 type: string
-                example: Successfully updated contact!
+                example: 'Successfully patched a contact!'
               data:
                 $ref: '../../../components/schemas/contact.yaml#/Contact'
     '400':
       $ref: '../../../components/schemas/error.yaml#/Error'
     '404':
+      $ref: '../../../components/schemas/error.yaml#/Error'
+    '401':
       $ref: '../../../components/schemas/error.yaml#/Error'

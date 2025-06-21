@@ -13,29 +13,28 @@ servers:
 
 tags:
   - name: Auth
-    description: Endpoints for registration, login, refresh and logout
+    description: Endpoints for registration, login, refresh, logout
   - name: Contacts
     description: CRUD operations on contacts
 
 paths:
   /auth/register:
-    $ref: '../swagger/paths/auth/register.yaml'
-
+    post:
+      $ref: '../swagger/paths/auth/register.yaml#/post'
   /auth/login:
-    $ref: '../swagger/paths/auth/login.yaml'
-
+    post:
+      $ref: '../swagger/paths/auth/login.yaml#/post'
   /auth/refresh:
-    $ref: '../swagger/paths/auth/refresh.yaml'
-
+    post:
+      $ref: '../swagger/paths/auth/refresh.yaml#/post'
   /auth/logout:
-    $ref: '../swagger/paths/auth/logout.yaml'
-
+    post:
+      $ref: '../swagger/paths/auth/logout.yaml#/post'
   /contacts:
     get:
       $ref: '../swagger/paths/contacts/get-contacts.yaml#/get'
     post:
       $ref: '../swagger/paths/contacts/post-contact.yaml#/post'
-
   /contacts/{contactId}:
     get:
       $ref: '../swagger/paths/contacts/{contactId}/get.yaml#/get'

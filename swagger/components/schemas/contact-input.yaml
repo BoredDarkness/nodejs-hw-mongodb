@@ -2,21 +2,23 @@ ContactInput:
   type: object
   required:
     - name
-    - email
     - phoneNumber
     - contactType
   properties:
     name:
       type: string
+      minLength: 3
+      maxLength: 20
+    phoneNumber:
+      type: string
+      pattern: '^\+?\d{7,15}$'
     email:
       type: string
       format: email
-    phoneNumber:
-      type: string
-      example: '+380501234567'
-    contactType:
-      type: string
-      example: 'work'
+      nullable: true
     isFavourite:
       type: boolean
       default: false
+    contactType:
+      type: string
+      enum: [personal, work]

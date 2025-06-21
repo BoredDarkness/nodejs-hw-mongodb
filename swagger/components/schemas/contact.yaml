@@ -1,19 +1,24 @@
 Contact:
   type: object
+  required:
+    - _id
+    - name
+    - phoneNumber
+    - contactType
   properties:
     _id:
       type: string
     name:
       type: string
-    email:
-      type: string
-      format: email
     phoneNumber:
       type: string
-    contactType:
+    email:
       type: string
+      nullable: true
     isFavourite:
       type: boolean
+    contactType:
+      type: string
     createdAt:
       type: string
       format: date-time

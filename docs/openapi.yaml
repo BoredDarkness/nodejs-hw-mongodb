@@ -18,7 +18,30 @@ tags:
     description: CRUD operations on contacts
 
 paths:
-  $ref: '../swagger/paths.yaml'
+  /auth/register:
+    post:
+      $ref: '../swagger/paths/auth/register.yaml#/post'
+  /auth/login:
+    post:
+      $ref: '../swagger/paths/auth/login.yaml#/post'
+  /auth/refresh:
+    post:
+      $ref: '../swagger/paths/auth/refresh.yaml#/post'
+  /auth/logout:
+    post:
+      $ref: '../swagger/paths/auth/logout.yaml#/post'
+  /contacts:
+    get:
+      $ref: '../swagger/paths/contacts/get-contacts.yaml#/get'
+    post:
+      $ref: '../swagger/paths/contacts/post-contact.yaml#/post'
+  /contacts/{contactId}:
+    get:
+      $ref: '../swagger/paths/contacts/{contactId}/get.yaml#/get'
+    patch:
+      $ref: '../swagger/paths/contacts/{contactId}/patch.yaml#/patch'
+    delete:
+      $ref: '../swagger/paths/contacts/{contactId}/delete.yaml#/delete'
 
 components:
   securitySchemes:
@@ -27,4 +50,9 @@ components:
       scheme: bearer
 
   schemas:
-    $ref: '../swagger/components/schemas/index.yaml'
+    ContactInput:
+      $ref: '../swagger/components/schemas/contact-input.yaml#/ContactInput'
+    Contact:
+      $ref: '../swagger/components/schemas/contact.yaml#/Contact'
+    Error:
+      $ref: '../swagger/components/schemas/error.yaml#/Error'

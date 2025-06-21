@@ -1,19 +1,27 @@
 Contact:
   type: object
-  allOf:
-    - $ref: './contact-input.yaml#/ContactInput'
-    - type: object
-      properties:
-        _id:
-          type: string
-        userId:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        photo:
-          type: string
-          nullable: true
+  required:
+    - _id
+    - name
+    - phoneNumber
+    - contactType
+  properties:
+    _id:
+      type: string
+    name:
+      type: string
+    phoneNumber:
+      type: string
+    email:
+      type: string
+      nullable: true
+    isFavourite:
+      type: boolean
+    contactType:
+      type: string
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time

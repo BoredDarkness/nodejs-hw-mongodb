@@ -1,14 +1,11 @@
 post:
   tags:
     - Auth
-  summary: Log out current user
+  summary: Logout current user
   operationId: logoutUser
+
   responses:
     '204':
       description: Successfully logged out (no content)
     '401':
-      description: Not authorized
-      content:
-        application/json:
-          schema:
-            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'
+      $ref: '../../components/schemas/error.yaml#/Error'

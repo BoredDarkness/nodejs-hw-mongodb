@@ -3,16 +3,25 @@ post:
     - Auth
   summary: Refresh access token
   operationId: refreshToken
+
   responses:
     '200':
       description: Successfully refreshed a session!
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/index.yaml#/components/schemas/TokenResponse'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: 'Successfully refreshed a session!'
+              data:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
     '401':
-      description: Invalid or expired refresh token
-      content:
-        application/json:
-          schema:
-            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'
+      $ref: '../../components/schemas/error.yaml#/Error'

@@ -1,14 +1,23 @@
 paths:
   /auth/register:
-    $ref: './paths/auth/register.yaml'
+    $ref: './paths/auth/register.yaml#/post'
   /auth/login:
-    $ref: './paths/auth/login.yaml'
+    $ref: './paths/auth/login.yaml#/post'
   /auth/refresh:
-    $ref: './paths/auth/refresh.yaml'
+    $ref: './paths/auth/refresh.yaml#/post'
   /auth/logout:
-    $ref: './paths/auth/logout.yaml'
+    $ref: './paths/auth/logout.yaml#/post'
 
   /contacts:
-    $ref: './paths/contacts/get-post-contacts.yaml'
+    get:
+      $ref: './paths/contacts/get-contacts.yaml#/get'
+    post:
+      $ref: './paths/contacts/post-contact.yaml#/post'
+
   /contacts/{contactId}:
-    $ref: './paths/contacts/contact-by-id.yaml'
+    get:
+      $ref: './paths/contacts/{contactId}/get.yaml#/get'
+    patch:
+      $ref: './paths/contacts/{contactId}/patch.yaml#/patch'
+    delete:
+      $ref: './paths/contacts/{contactId}/delete.yaml#/delete'

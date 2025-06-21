@@ -1,7 +1,7 @@
 post:
   tags:
     - Auth
-  summary: Log in a user
+  summary: Authenticate a user
   operationId: loginUser
   requestBody:
     required: true
@@ -17,8 +17,4 @@ post:
           schema:
             $ref: '../../components/schemas/index.yaml#/components/schemas/TokenResponse'
     '401':
-      description: Invalid credentials
-      content:
-        application/json:
-          schema:
-            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'
+      $ref: '../../components/schemas/index.yaml#/components/schemas/Error'

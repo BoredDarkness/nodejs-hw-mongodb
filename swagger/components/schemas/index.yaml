@@ -1,0 +1,44 @@
+components:
+  schemas:
+    ContactInput:
+      $ref: './contact-input.yaml#/ContactInput'
+    Contact:
+      $ref: './contact.yaml#/Contact'
+    Error:
+      $ref: './error.yaml#/Error'
+
+    # —————— Auth schemas ——————
+    Register:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…

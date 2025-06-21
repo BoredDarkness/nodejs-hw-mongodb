@@ -3,32 +3,27 @@ info:
   version: 1.0.0
   title: Contacts API
   description: Backend for managing users and their contacts.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-
-servers:
-  - url: http://localhost:3000
-  - url: https://<your-deployed-url>
-
 tags:
   - name: Auth
-    description: Endpoints for registration, login, refresh and logout
+    description: Endpoints for registration, login, refresh, logout
   - name: Contacts
     description: CRUD operations on contacts
+servers:
+  - url: http://localhost:3000
 
 paths:
   /auth/register:
-    $ref: '../swagger/paths/auth/register.yaml#/post'
-
+    post:
+      $ref: '../swagger/paths/auth/register.yaml#/post'
   /auth/login:
-    $ref: '../swagger/paths/auth/login.yaml#/post'
-
+    post:
+      $ref: '../swagger/paths/auth/login.yaml#/post'
   /auth/refresh:
-    $ref: '../swagger/paths/auth/refresh.yaml#/post'
-
+    post:
+      $ref: '../swagger/paths/auth/refresh.yaml#/post'
   /auth/logout:
-    $ref: '../swagger/paths/auth/logout.yaml#/post'
+    post:
+      $ref: '../swagger/paths/auth/logout.yaml#/post'
 
   /contacts:
     get:
@@ -49,7 +44,6 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
-
   schemas:
     ContactInput:
       $ref: '../swagger/components/schemas/contact-input.yaml#/ContactInput'

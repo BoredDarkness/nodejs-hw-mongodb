@@ -3,24 +3,17 @@
   "info": {
     "version": "1.0.0",
     "title": "Contacts API",
-    "description": "Backend for managing users and their contacts.",
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }
+    "description": "Backend for managing users and their contacts."
   },
   "servers": [
     {
       "url": "http://localhost:3000"
-    },
-    {
-      "url": "https://<your-deployed-url>"
     }
   ],
   "tags": [
     {
       "name": "Auth",
-      "description": "Endpoints for registration, login, refresh and logout"
+      "description": "Endpoints for registration, login, refresh, logout"
     },
     {
       "name": "Contacts",
@@ -29,152 +22,160 @@
   ],
   "paths": {
     "/auth/register": {
-      "tags": [
-        "Auth"
-      ],
-      "summary": "Register a new user",
-      "operationId": "registerUser",
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "../../components/schemas/auth-register.yaml#/Register"
-            }
-          }
-        }
-      },
-      "responses": {
-        "201": {
-          "description": "Successfully registered a user!",
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register a new user",
+        "operationId": "registerUser",
+        "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "status": {
-                    "type": "integer",
-                    "example": 201
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "Successfully registered a user!"
-                  },
-                  "data": {
-                    "$ref": "../../components/schemas/contact.yaml#/Contact"
-                  }
-                }
+                "$ref": "#/components/schemas/Register"
               }
             }
           }
         },
-        "409": {
-          "$ref": "../../components/schemas/error.yaml#/Error"
+        "responses": {
+          "201": {
+            "description": "Successfully registered a user!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully registered a user!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Contact"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
         }
       }
     },
     "/auth/login": {
-      "tags": [
-        "Auth"
-      ],
-      "summary": "Log in an existing user",
-      "operationId": "loginUser",
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "../../components/schemas/auth-login.yaml#/Login"
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": {
-          "description": "Successfully logged in a user!",
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Log in an existing user",
+        "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "status": {
-                    "type": "integer",
-                    "example": 200
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "Successfully logged in a user!"
-                  },
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "accessToken": {
-                        "type": "string"
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully logged in a user!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully logged in a user!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string"
+                        }
                       }
                     }
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
           }
-        },
-        "401": {
-          "$ref": "../../components/schemas/error.yaml#/Error"
         }
       }
     },
     "/auth/refresh": {
-      "tags": [
-        "Auth"
-      ],
-      "summary": "Refresh access token",
-      "operationId": "refreshToken",
-      "responses": {
-        "200": {
-          "description": "Successfully refreshed a session!",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "status": {
-                    "type": "integer",
-                    "example": 200
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "Successfully refreshed a session!"
-                  },
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "accessToken": {
-                        "type": "string"
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh access token",
+        "operationId": "refreshToken",
+        "responses": {
+          "200": {
+            "description": "Successfully refreshed a session!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully refreshed a session!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string"
+                        }
                       }
                     }
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
           }
-        },
-        "401": {
-          "$ref": "../../components/schemas/error.yaml#/Error"
         }
       }
     },
     "/auth/logout": {
-      "tags": [
-        "Auth"
-      ],
-      "summary": "Logout current user",
-      "operationId": "logoutUser",
-      "responses": {
-        "204": {
-          "description": "Successfully logged out (no content)"
-        },
-        "401": {
-          "$ref": "../../components/schemas/error.yaml#/Error"
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout current user",
+        "operationId": "logoutUser",
+        "responses": {
+          "204": {
+            "description": "Successfully logged out (no content)"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          }
         }
       }
     },
@@ -558,6 +559,49 @@
           "data": {
             "type": "object",
             "nullable": true
+          }
+        }
+      },
+      "Register": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123"
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123"
           }
         }
       }

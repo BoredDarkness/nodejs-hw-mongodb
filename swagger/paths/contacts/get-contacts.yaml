@@ -1,0 +1,29 @@
+get:
+  tags: [Contacts]
+  summary: Get all contacts of the logged-in user
+  operationId: listContacts
+  parameters:
+    - in: query
+      name: page
+      schema:
+        type: integer
+    - in: query
+      name: perPage
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: List of contacts
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              message:
+                type: string
+              data:
+                type: array
+                items:
+                  $ref: '../../components/schemas/contact.yaml#/Contact'

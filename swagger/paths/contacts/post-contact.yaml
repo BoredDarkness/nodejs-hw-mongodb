@@ -1,0 +1,28 @@
+post:
+  tags: [Contacts]
+  summary: Create a new contact
+  operationId: createContact
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/contact-input.yaml#/ContactInput'
+  responses:
+    '201':
+      description: Successfully created a contact
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              message:
+                type: string
+                example: Successfully created a contact!
+              data:
+                $ref: '../../components/schemas/contact.yaml#/Contact'
+    '400':
+      $ref: '../../components/schemas/error.yaml#/Error'

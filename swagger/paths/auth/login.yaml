@@ -1,20 +1,31 @@
 post:
-  tags:
-    - Auth
-  summary: Authenticate a user
+  tags: [Auth]
+  summary: Log in an existing user
   operationId: loginUser
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/index.yaml#/components/schemas/Login'
+          $ref: '../../components/schemas/auth-login.yaml#/Login'
   responses:
     '200':
       description: Successfully logged in a user!
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/index.yaml#/components/schemas/TokenResponse'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Successfully logged in a user!
+              data:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
     '401':
-      $ref: '../../components/schemas/index.yaml#/components/schemas/Error'
+      $ref: '../../components/schemas/error.yaml#/Error'

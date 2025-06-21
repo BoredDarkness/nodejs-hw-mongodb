@@ -11,7 +11,7 @@ ContactInput:
       maxLength: 20
     phoneNumber:
       type: string
-      pattern: '^\+?\d{7,15}$'
+      example: '+380501234567'
     email:
       type: string
       format: email
@@ -21,4 +21,6 @@ ContactInput:
       default: false
     contactType:
       type: string
-      enum: [personal, work]
+      enum:
+        - personal
+        - work

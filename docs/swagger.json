@@ -20,7 +20,7 @@
   "tags": [
     {
       "name": "Auth",
-      "description": "Endpoints for registration, login, refresh, logout"
+      "description": "Endpoints for registration, login, refresh and logout"
     },
     {
       "name": "Contacts",
@@ -29,166 +29,152 @@
   ],
   "paths": {
     "/auth/register": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Authenticate a user",
-        "operationId": "loginUser",
-        "requestBody": {
-          "required": true,
+      "tags": [
+        "Auth"
+      ],
+      "summary": "Register a new user",
+      "operationId": "registerUser",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../../components/schemas/auth-register.yaml#/Register"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Successfully registered a user!",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "name",
-                  "email",
-                  "password"
-                ],
                 "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 2
+                  "status": {
+                    "type": "integer",
+                    "example": 201
                   },
-                  "email": {
+                  "message": {
                     "type": "string",
-                    "format": "email"
+                    "example": "Successfully registered a user!"
                   },
-                  "password": {
-                    "type": "string",
-                    "minLength": 6
+                  "data": {
+                    "$ref": "../../components/schemas/contact.yaml#/Contact"
                   }
                 }
               }
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Successfully logged in a user!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully logged in a user!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "accessToken": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          }
+        "409": {
+          "$ref": "../../components/schemas/error.yaml#/Error"
         }
       }
     },
     "/auth/login": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Authenticate a user",
-        "operationId": "loginUser",
-        "requestBody": {
-          "required": true,
+      "tags": [
+        "Auth"
+      ],
+      "summary": "Log in an existing user",
+      "operationId": "loginUser",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../../components/schemas/auth-login.yaml#/Login"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successfully logged in a user!",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Login"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successfully logged in a user!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          }
-        }
-      }
-    },
-    "/auth/refresh": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Refresh access token",
-        "operationId": "refreshToken",
-        "responses": {
-          "200": {
-            "description": "Successfully refreshed a session!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully refreshed a session!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "accessToken": {
-                          "type": "string"
-                        }
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "integer",
+                    "example": 200
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Successfully logged in a user!"
+                  },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "accessToken": {
+                        "type": "string"
                       }
                     }
                   }
                 }
               }
             }
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
           }
+        },
+        "401": {
+          "$ref": "../../components/schemas/error.yaml#/Error"
+        }
+      }
+    },
+    "/auth/refresh": {
+      "tags": [
+        "Auth"
+      ],
+      "summary": "Refresh access token",
+      "operationId": "refreshToken",
+      "responses": {
+        "200": {
+          "description": "Successfully refreshed a session!",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "integer",
+                    "example": 200
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Successfully refreshed a session!"
+                  },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "accessToken": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": {
+          "$ref": "../../components/schemas/error.yaml#/Error"
         }
       }
     },
     "/auth/logout": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Logout current user",
-        "operationId": "logoutUser",
-        "responses": {
-          "204": {
-            "description": "Successfully logged out (no content)"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          }
+      "tags": [
+        "Auth"
+      ],
+      "summary": "Logout current user",
+      "operationId": "logoutUser",
+      "responses": {
+        "204": {
+          "description": "Successfully logged out (no content)"
+        },
+        "401": {
+          "$ref": "../../components/schemas/error.yaml#/Error"
         }
       }
     },
@@ -220,10 +206,7 @@
             "in": "query",
             "name": "sortBy",
             "schema": {
-              "type": "string",
-              "enum": [
-                "name"
-              ]
+              "type": "string"
             }
           },
           {
@@ -274,38 +257,18 @@
                       "example": "Successfully found contacts!"
                     },
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Contact"
-                          }
-                        },
-                        "page": {
-                          "type": "integer"
-                        },
-                        "perPage": {
-                          "type": "integer"
-                        },
-                        "totalItems": {
-                          "type": "integer"
-                        },
-                        "totalPages": {
-                          "type": "integer"
-                        },
-                        "hasPreviousPage": {
-                          "type": "boolean"
-                        },
-                        "hasNextPage": {
-                          "type": "boolean"
-                        }
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Contact"
                       }
                     }
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -351,6 +314,9 @@
           },
           "400": {
             "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -374,7 +340,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully found contact",
+            "description": "Successfully found contact!",
             "content": {
               "application/json": {
                 "schema": {
@@ -396,6 +362,9 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
           "404": {
             "$ref": "#/components/responses/Error"
           }
@@ -407,11 +376,6 @@
         ],
         "summary": "Update a contact by ID",
         "operationId": "updateContact",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "parameters": [
           {
             "in": "path",
@@ -471,7 +435,7 @@
         "tags": [
           "Contacts"
         ],
-        "summary": "Delete a contact",
+        "summary": "Delete a contact by ID",
         "operationId": "deleteContact",
         "parameters": [
           {
@@ -485,7 +449,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Successfully deleted (no content)"
+            "description": "Successfully deleted a contact!"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
           },
           "404": {
             "$ref": "#/components/responses/Error"
@@ -517,7 +484,7 @@
           },
           "phoneNumber": {
             "type": "string",
-            "pattern": "^\\+?\\d{7,15}$"
+            "example": "+380501234567"
           },
           "email": {
             "type": "string",
@@ -579,47 +546,18 @@
         "type": "object",
         "required": [
           "status",
-          "message",
-          "data"
+          "message"
         ],
         "properties": {
           "status": {
-            "type": "integer",
-            "example": 404
+            "type": "integer"
           },
           "message": {
-            "type": "string",
-            "example": "Not Found"
+            "type": "string"
           },
           "data": {
             "type": "object",
-            "example": {}
-          }
-        }
-      },
-      "Login": {
-        "type": "object",
-        "required": [
-          "email",
-          "password"
-        ],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string"
-          }
-        }
-      },
-      "TokenResponse": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "JWT access token",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…"
+            "nullable": true
           }
         }
       }
@@ -629,21 +567,18 @@
         "type": "object",
         "required": [
           "status",
-          "message",
-          "data"
+          "message"
         ],
         "properties": {
           "status": {
-            "type": "integer",
-            "example": 404
+            "type": "integer"
           },
           "message": {
-            "type": "string",
-            "example": "Not Found"
+            "type": "string"
           },
           "data": {
             "type": "object",
-            "example": {}
+            "nullable": true
           }
         }
       }

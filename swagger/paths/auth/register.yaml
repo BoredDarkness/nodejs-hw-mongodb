@@ -1,31 +1,16 @@
 post:
-  tags:
-    - Auth
-  summary: Authenticate a user
-  operationId: loginUser
+  tags: [Auth]
+  summary: Register a new user
+  operationId: registerUser
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          type: object
-          required:
-            - name
-            - email
-            - password
-          properties:
-            name:
-              type: string
-              minLength: 2
-            email:
-              type: string
-              format: email
-            password:
-              type: string
-              minLength: 6
+          $ref: '../../components/schemas/auth-register.yaml#/Register'
   responses:
-    '200':
-      description: Successfully logged in a user!
+    '201':
+      description: Successfully registered a user!
       content:
         application/json:
           schema:
@@ -33,14 +18,11 @@ post:
             properties:
               status:
                 type: integer
-                example: 200
+                example: 201
               message:
                 type: string
-                example: 'Successfully logged in a user!'
+                example: Successfully registered a user!
               data:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-    '401':
+                $ref: '../../components/schemas/contact.yaml#/Contact'
+    '409':
       $ref: '../../components/schemas/error.yaml#/Error'

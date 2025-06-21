@@ -3,14 +3,11 @@ Error:
   required:
     - status
     - message
-    - data
   properties:
     status:
       type: integer
-      example: 404
     message:
       type: string
-      example: 'Not Found'
     data:
       type: object
-      example: {}
+      nullable: true

@@ -1,7 +1,6 @@
 delete:
-  tags:
-    - Contacts
-  summary: Delete a contact
+  tags: [Contacts]
+  summary: Delete a contact by ID
   operationId: deleteContact
   parameters:
     - in: path
@@ -11,6 +10,8 @@ delete:
         type: string
   responses:
     '204':
-      description: Successfully deleted (no content)
+      description: Successfully deleted a contact!
     '404':
+      $ref: '../../../components/schemas/error.yaml#/Error'
+    '401':
       $ref: '../../../components/schemas/error.yaml#/Error'

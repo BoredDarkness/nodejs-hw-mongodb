@@ -1,6 +1,5 @@
 get:
-  tags:
-    - Contacts
+  tags: [Contacts]
   summary: List contacts with pagination, sorting and filtering
   operationId: listContacts
   parameters:
@@ -18,7 +17,6 @@ get:
       name: sortBy
       schema:
         type: string
-        enum: [name]
     - in: query
       name: sortOrder
       schema:
@@ -47,23 +45,10 @@ get:
                 example: 200
               message:
                 type: string
-                example: 'Successfully found contacts!'
+                example: Successfully found contacts!
               data:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '../../components/schemas/contact.yaml#/Contact'
-                  page:
-                    type: integer
-                  perPage:
-                    type: integer
-                  totalItems:
-                    type: integer
-                  totalPages:
-                    type: integer
-                  hasPreviousPage:
-                    type: boolean
-                  hasNextPage:
-                    type: boolean
+                type: array
+                items:
+                  $ref: '../../components/schemas/contact.yaml#/Contact'
+    '401':
+      $ref: '../../components/schemas/error.yaml#/Error'

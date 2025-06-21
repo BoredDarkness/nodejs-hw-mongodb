@@ -1,9 +1,7 @@
 post:
-  tags:
-    - Auth
+  tags: [Auth]
   summary: Refresh access token
   operationId: refreshToken
-
   responses:
     '200':
       description: Successfully refreshed a session!
@@ -17,7 +15,7 @@ post:
                 example: 200
               message:
                 type: string
-                example: 'Successfully refreshed a session!'
+                example: Successfully refreshed a session!
               data:
                 type: object
                 properties:

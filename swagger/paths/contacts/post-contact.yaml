@@ -1,6 +1,5 @@
 post:
-  tags:
-    - Contacts
+  tags: [Contacts]
   summary: Create a new contact
   operationId: createContact
   requestBody:
@@ -22,8 +21,10 @@ post:
                 example: 201
               message:
                 type: string
-                example: 'Successfully created a contact!'
+                example: Successfully created a contact!
               data:
                 $ref: '../../components/schemas/contact.yaml#/Contact'
     '400':
+      $ref: '../../components/schemas/error.yaml#/Error'
+    '401':
       $ref: '../../components/schemas/error.yaml#/Error'

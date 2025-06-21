@@ -1,9 +1,7 @@
 post:
-  tags:
-    - Auth
+  tags: [Auth]
   summary: Logout current user
   operationId: logoutUser
-
   responses:
     '204':
       description: Successfully logged out (no content)

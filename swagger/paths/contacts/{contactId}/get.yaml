@@ -1,6 +1,5 @@
 get:
-  tags:
-    - Contacts
+  tags: [Contacts]
   summary: Get a contact by ID
   operationId: getContactById
   parameters:
@@ -11,7 +10,7 @@ get:
         type: string
   responses:
     '200':
-      description: Successfully found contact
+      description: Successfully found contact!
       content:
         application/json:
           schema:
@@ -22,8 +21,10 @@ get:
                 example: 200
               message:
                 type: string
-                example: 'Successfully found contact!'
+                example: Successfully found contact!
               data:
                 $ref: '../../../components/schemas/contact.yaml#/Contact'
     '404':
+      $ref: '../../../components/schemas/error.yaml#/Error'
+    '401':
       $ref: '../../../components/schemas/error.yaml#/Error'

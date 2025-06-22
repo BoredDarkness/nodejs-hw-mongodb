@@ -1,63 +1,32 @@
-import { Router } from 'express';
-import Joi from 'joi';
-
+import express from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
-
 import {
-  registerController,
-  loginController,
-  refreshController,
-  logoutController,
-  sendResetEmailController,
-  resetPasswordController,
+  registerSchema,
+  loginSchema,
+  sendResetSchema,
+  resetPwdSchema,
+} from '../models/authSchemas.js';
+import {
+  register,
+  login,
+  sendResetEmail,
+  resetPassword,
 } from '../controllers/auth.js';
 
-const router = Router();
+const router = express.Router();
 
-// hw5
-router.post(
-  '/register',
-  validateBody(
-    Joi.object({
-      name: Joi.string().min(3).max(30).required(),
-      email: Joi.string().email().required(),
-      password: Joi.string().min(6).required(),
-    }),
-  ),
-  ctrlWrapper(registerController),
-);
-
-router.post(
-  '/login',
-  validateBody(
-    Joi.object({
-      email: Joi.string().email().required(),
-      password: Joi.string().required(),
-    }),
-  ),
-  ctrlWrapper(loginController),
-);
-
-router.post('/refresh', ctrlWrapper(refreshController));
-router.post('/logout', ctrlWrapper(logoutController));
-
-// hw6
+router.post('/register', validateBody(registerSchema), ctrlWrapper(register));
+router.post('/login', validateBody(loginSchema), ctrlWrapper(login));
 router.post(
   '/send-reset-email',
-  validateBody(Joi.object({ email: Joi.string().email().required() })),
-  ctrlWrapper(sendResetEmailController),
+  validateBody(sendResetSchema),
+  ctrlWrapper(sendResetEmail),
 );
-
 router.post(
   '/reset-pwd',
-  validateBody(
-    Joi.object({
-      token: Joi.string().required(),
-      password: Joi.string().min(6).required(),
-    }),
-  ),
-  ctrlWrapper(resetPasswordController),
+  validateBody(resetPwdSchema),
+  ctrlWrapper(resetPassword),
 );
 
 export default router;

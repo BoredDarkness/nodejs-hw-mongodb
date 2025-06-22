@@ -1,9 +1,11 @@
-export default (err, req, res, next) => {
+export default function errorHandler(err, req, res, next) {
   const status = err.status || 500;
-  const message = status === 500 ? 'Something went wrong' : err.message;
+
+  const message = err.expose ? err.message : err.message;
+
   res.status(status).json({
     status,
     message,
-    data: err.message,
+    data: {},
   });
-};
+}

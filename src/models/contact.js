@@ -2,19 +2,15 @@ import { Schema, model } from 'mongoose';
 
 const contactSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true },
+    email: { type: String, required: true },
     phoneNumber: { type: String, required: true },
-    email: { type: String },
     isFavourite: { type: Boolean, default: false },
-    contactType: {
-      type: String,
-      enum: ['work', 'home', 'personal'],
-      default: 'personal',
-      required: true,
-    },
+    contactType: { type: String, default: 'personal' },
+    photo: { type: String, default: null },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true },
 );
 
-export const Contact = model('Contact', contactSchema);
+export default model('Contact', contactSchema);

@@ -1,140 +1,94 @@
-import bcrypt from 'bcrypt';
-import createHttpError from 'http-errors';
-import { nanoid } from 'nanoid';
-
-import { signToken, verifyToken } from '../utils/jwt.js';
-import { sendResetEmail } from '../services/mail.js';
+import createError from 'http-errors';
 import { User } from '../models/user.js';
-import {
-  createSession,
-  deleteSessionByUserId,
-  findSessionByRefreshToken,
-} from '../services/auth.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import transport from '../services/mail.js';
+import { generateResetToken, verifyResetToken } from '../utils/jwt.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const RESET_TTL = '5m';
-
-export async function registerController(req, res) {
+export async function register(req, res) {
   const { name, email, password } = req.body;
-  if (await User.findOne({ email })) {
-    throw createHttpError(409, 'Email in use');
-  }
+  const existing = await User.findOne({ email });
+  if (existing) throw createError(409, 'Email in use');
+
   const hash = await bcrypt.hash(password, 10);
-  const user = await User.create({ name, email, password: hash });
+  const newUser = await User.create({ name, email, password: hash });
+
   res.status(201).json({
     status: 201,
-    message: 'Successfully registered a user!',
-    data: { _id: user._id, name: user.name, email: user.email },
+    message: 'User registered',
+    data: { id: newUser._id, name: newUser.name, email: newUser.email },
   });
 }
 
-export async function loginController(req, res) {
+export async function login(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user) throw createHttpError(401, 'Email or password is wrong');
-  if (!(await bcrypt.compare(password, user.password))) {
-    throw createHttpError(401, 'Email or password is wrong');
-  }
+  if (!user) throw createError(401, 'Email or password is wrong');
 
-  await deleteSessionByUserId(user._id);
-  const accessToken = nanoid(32);
-  const refreshToken = nanoid(64);
-  const now = Date.now();
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch) throw createError(401, 'Email or password is wrong');
 
-  await createSession({
-    userId: user._id,
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: new Date(now + 15 * 60 * 1000),
-    refreshTokenValidUntil: new Date(now + 30 * 24 * 60 * 60 * 1000),
-  });
+  const token = jwt.sign(
+    { id: user._id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' },
+  );
 
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
   res.json({
     status: 200,
-    message: 'Successfully logged in a user!',
-    data: { accessToken },
+    message: 'Login successful',
+    data: { token },
   });
 }
 
-export async function refreshController(req, res) {
-  const { refreshToken } = req.cookies;
-  if (!refreshToken) throw createHttpError(401, 'Not authorized');
-
-  const session = await findSessionByRefreshToken(refreshToken);
-  if (!session) throw createHttpError(401, 'Not authorized');
-  if (session.refreshTokenValidUntil < new Date()) {
-    throw createHttpError(401, 'Refresh token expired');
-  }
-
-  await session.deleteOne();
-  const accessToken = nanoid(32);
-  const newRefresh = nanoid(64);
-  const now = Date.now();
-
-  await createSession({
-    userId: session.userId,
-    accessToken,
-    refreshToken: newRefresh,
-    accessTokenValidUntil: new Date(now + 15 * 60 * 1000),
-    refreshTokenValidUntil: new Date(now + 30 * 24 * 60 * 60 * 1000),
-  });
-
-  res.cookie('refreshToken', newRefresh, {
-    httpOnly: true,
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
-  res.json({
-    status: 200,
-    message: 'Successfully refreshed a session!',
-    data: { accessToken },
-  });
-}
-
-export async function logoutController(req, res) {
-  const { refreshToken } = req.cookies;
-  if (!refreshToken) throw createHttpError(401, 'Not authorized');
-  const session = await findSessionByRefreshToken(refreshToken);
-  if (session) await session.deleteOne();
-  res.clearCookie('refreshToken');
-  res.status(204).send();
-}
-
-export async function sendResetEmailController(req, res) {
+export async function sendResetEmail(req, res, next) {
   const { email } = req.body;
   const user = await User.findOne({ email });
-  if (!user) throw createHttpError(404, 'User not found!');
-  const token = signToken({ email }, RESET_TTL);
+  if (!user) throw createError(404, 'User not found!');
+
+  const token = generateResetToken(email);
+  const resetLink = `${process.env.APP_DOMAIN}?token=${token}`;
+
   try {
-    await sendResetEmail(email, token);
-  } catch {
-    throw createHttpError(
-      500,
-      'Failed to send the email, please try again later.',
+    await transport.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: 'Password reset',
+      html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
+    });
+  } catch (err) {
+    // ось тут виведемо справжню причину падіння
+    console.error('💥 sendMail Error:', err);
+    // потім передамо в єдиний errorHandler
+    return next(
+      createError(500, 'Failed to send the email, please try again later.'),
     );
   }
+
   res.status(200).json({
     status: 200,
     message: 'Reset password email has been successfully sent.',
     data: {},
   });
 }
-
-export async function resetPasswordController(req, res) {
+export async function resetPassword(req, res) {
   const { token, password } = req.body;
   let payload;
   try {
-    payload = verifyToken(token);
+    payload = verifyResetToken(token);
   } catch {
-    throw createHttpError(401, 'Token is expired or invalid.');
+    throw createError(401, 'Token is expired or invalid.');
   }
+
   const user = await User.findOne({ email: payload.email });
-  if (!user) throw createHttpError(404, 'User not found!');
-  user.password = await bcrypt.hash(password, 10);
+  if (!user) throw createError(404, 'User not found!');
+
+  const hashed = await bcrypt.hash(password, 10);
+  user.password = hashed;
   await user.save();
-  await deleteSessionByUserId(user._id);
+
   res.status(200).json({
     status: 200,
     message: 'Password has been successfully reset.',

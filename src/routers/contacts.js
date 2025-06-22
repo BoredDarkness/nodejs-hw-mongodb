@@ -1,41 +1,31 @@
-import { Router } from 'express';
+import express from 'express';
 import { upload } from '../utils/upload.js';
 import authentificate from '../middlewares/authentificate.js';
+
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
-import { isValidId } from '../utils/isValidId.js';
-
 import {
-  createContactSchema,
-  updateContactSchema,
+  contactCreateSchema,
+  contactUpdateSchema,
 } from '../models/contactSchemas.js';
+import { createContact, updateContact } from '../controllers/contacts.js';
 
-import {
-  listContacts,
-  getContact,
-  createContact,
-  updateContact,
-  deleteContact,
-} from '../controllers/contacts.js';
+const router = express.Router();
 
-const router = Router();
-router.use(authentificate);
-
-router.get('/', ctrlWrapper(listContacts));
-router.get('/:contactId', isValidId, ctrlWrapper(getContact));
 router.post(
   '/',
+  authentificate,
   upload.single('photo'),
-  validateBody(createContactSchema),
+  validateBody(contactCreateSchema),
   ctrlWrapper(createContact),
 );
+
 router.patch(
   '/:contactId',
-  isValidId,
+  authentificate,
   upload.single('photo'),
-  validateBody(updateContactSchema),
+  validateBody(contactUpdateSchema),
   ctrlWrapper(updateContact),
 );
-router.delete('/:contactId', isValidId, ctrlWrapper(deleteContact));
 
 export default router;

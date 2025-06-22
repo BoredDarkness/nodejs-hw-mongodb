@@ -8,9 +8,18 @@ import {
   contactCreateSchema,
   contactUpdateSchema,
 } from '../models/contactSchemas.js';
-import { createContact, updateContact } from '../controllers/contacts.js';
+import {
+  getContacts,
+  getContactById,
+  createContact,
+  updateContact,
+  deleteContact,
+} from '../controllers/contacts.js';
 
 const router = express.Router();
+
+router.get('/', authentificate, ctrlWrapper(getContacts));
+router.get('/:contactId', authentificate, ctrlWrapper(getContactById));
 
 router.post(
   '/',
@@ -27,5 +36,7 @@ router.patch(
   validateBody(contactUpdateSchema),
   ctrlWrapper(updateContact),
 );
+
+router.delete('/:contactId', authentificate, ctrlWrapper(deleteContact));
 
 export default router;

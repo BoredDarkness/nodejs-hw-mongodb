@@ -59,9 +59,8 @@ export async function sendResetEmail(req, res, next) {
       html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
     });
   } catch (err) {
-    // ось тут виведемо справжню причину падіння
     console.error('💥 sendMail Error:', err);
-    // потім передамо в єдиний errorHandler
+
     return next(
       createError(500, 'Failed to send the email, please try again later.'),
     );

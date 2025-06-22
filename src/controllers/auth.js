@@ -94,7 +94,7 @@ export async function sendResetEmail(req, res, next) {
       data: {},
     });
   } catch (err) {
-    next(createError(500, 'Failed to send the email, please try again later.'));
+    next(err(500, 'Failed to send the email, please try again later.'));
   }
 }
 

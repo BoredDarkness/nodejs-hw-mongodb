@@ -9,6 +9,7 @@ tags:
   - name: Contacts
     description: CRUD operations on contacts
 servers:
+  - url: https://app-contacts-swagger.onrender.com
   - url: http://localhost:3000
 
 paths:

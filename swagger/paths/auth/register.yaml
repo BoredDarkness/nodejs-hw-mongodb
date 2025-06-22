@@ -7,7 +7,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/auth-register.yaml#/Register'
+          $ref: '../../components/schemas/index.yaml#/components/schemas/Register'
   responses:
     '201':
       description: Successfully registered a user!
@@ -23,6 +23,16 @@ post:
                 type: string
                 example: Successfully registered a user!
               data:
-                $ref: '../../components/schemas/contact.yaml#/Contact'
+                $ref: '../../components/schemas/index.yaml#/components/schemas/Contact'
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'
     '409':
-      $ref: '../../components/schemas/error.yaml#/Error'
+      description: Conflict – email already in use
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'

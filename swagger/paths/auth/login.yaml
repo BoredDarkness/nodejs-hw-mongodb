@@ -7,7 +7,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/auth-login.yaml#/Login'
+          $ref: '../../components/schemas/index.yaml#/components/schemas/Login'
   responses:
     '200':
       description: Successfully logged in a user!
@@ -27,5 +27,15 @@ post:
                 properties:
                   accessToken:
                     type: string
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'
     '401':
-      $ref: '../../components/schemas/error.yaml#/Error'
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'

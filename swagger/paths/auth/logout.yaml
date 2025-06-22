@@ -1,9 +1,15 @@
 post:
   tags: [Auth]
-  summary: Logout current user
+  summary: Log out current user
   operationId: logoutUser
+  security:
+    - bearerAuth: []
   responses:
     '204':
       description: Successfully logged out (no content)
     '401':
-      $ref: '../../components/schemas/error.yaml#/Error'
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'

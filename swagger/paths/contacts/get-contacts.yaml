@@ -2,6 +2,8 @@ get:
   tags: [Contacts]
   summary: List contacts with pagination, sorting and filtering
   operationId: listContacts
+  security:
+    - bearerAuth: []
   parameters:
     - in: query
       name: page
@@ -47,8 +49,16 @@ get:
                 type: string
                 example: Successfully found contacts!
               data:
-                type: array
-                items:
-                  $ref: '../../components/schemas/contact.yaml#/Contact'
+                $ref: '../../components/schemas/index.yaml#/components/schemas/PaginatedContacts'
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'
     '401':
-      $ref: '../../components/schemas/error.yaml#/Error'
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'

@@ -7,6 +7,9 @@
   },
   "servers": [
     {
+      "url": "https://app-contacts-swagger.onrender.com"
+    },
+    {
       "url": "http://localhost:3000"
     }
   ],
@@ -62,8 +65,25 @@
               }
             }
           },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "409": {
-            "$ref": "#/components/responses/Error"
+            "description": "Conflict – email already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -114,8 +134,25 @@
               }
             }
           },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "401": {
-            "$ref": "#/components/responses/Error"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -127,6 +164,10 @@
         ],
         "summary": "Refresh access token",
         "operationId": "refreshToken",
+        "requestBody": {
+          "description": "Refresh token is read from HTTP-only cookie",
+          "required": false
+        },
         "responses": {
           "200": {
             "description": "Successfully refreshed a session!",
@@ -156,8 +197,25 @@
               }
             }
           },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "401": {
-            "$ref": "#/components/responses/Error"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -167,14 +225,26 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Logout current user",
+        "summary": "Log out current user",
         "operationId": "logoutUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "204": {
             "description": "Successfully logged out (no content)"
           },
           "401": {
-            "$ref": "#/components/responses/Error"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -186,6 +256,11 @@
         ],
         "summary": "List contacts with pagination, sorting and filtering",
         "operationId": "listContacts",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "query",
@@ -258,18 +333,32 @@
                       "example": "Successfully found contacts!"
                     },
                     "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Contact"
-                      }
+                      "$ref": "#/components/schemas/PaginatedContacts"
                     }
                   }
                 }
               }
             }
           },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "401": {
-            "$ref": "#/components/responses/Error"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -279,12 +368,44 @@
         ],
         "summary": "Create a new contact",
         "operationId": "createContact",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ContactInput"
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "phoneNumber"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phoneNumber": {
+                    "type": "string"
+                  },
+                  "isFavourite": {
+                    "type": "boolean"
+                  },
+                  "contactType": {
+                    "type": "string"
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
               }
             }
           }
@@ -314,10 +435,24 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Error"
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "401": {
-            "$ref": "#/components/responses/Error"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -329,6 +464,11 @@
         ],
         "summary": "Get a contact by ID",
         "operationId": "getContactById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -363,11 +503,35 @@
               }
             }
           },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "401": {
-            "$ref": "#/components/responses/Error"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "404": {
-            "$ref": "#/components/responses/Error"
+            "description": "Contact not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -377,6 +541,11 @@
         ],
         "summary": "Update a contact by ID",
         "operationId": "updateContact",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -390,9 +559,31 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ContactInput"
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phoneNumber": {
+                    "type": "string"
+                  },
+                  "isFavourite": {
+                    "type": "boolean"
+                  },
+                  "contactType": {
+                    "type": "string"
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
               }
             }
           }
@@ -422,13 +613,34 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Error"
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "401": {
-            "$ref": "#/components/responses/Error"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "404": {
-            "$ref": "#/components/responses/Error"
+            "description": "Contact not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -438,6 +650,11 @@
         ],
         "summary": "Delete a contact by ID",
         "operationId": "deleteContact",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -452,11 +669,35 @@
           "204": {
             "description": "Successfully deleted a contact!"
           },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "401": {
-            "$ref": "#/components/responses/Error"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "404": {
-            "$ref": "#/components/responses/Error"
+            "description": "Contact not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -571,18 +812,14 @@
         ],
         "properties": {
           "name": {
-            "type": "string",
-            "example": "John Doe"
+            "type": "string"
           },
           "email": {
             "type": "string",
-            "format": "email",
-            "example": "user@example.com"
+            "format": "email"
           },
           "password": {
-            "type": "string",
-            "format": "password",
-            "example": "password123"
+            "type": "string"
           }
         }
       },
@@ -595,36 +832,50 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email",
-            "example": "user@example.com"
+            "format": "email"
           },
           "password": {
-            "type": "string",
-            "format": "password",
-            "example": "password123"
+            "type": "string"
           }
         }
-      }
-    },
-    "responses": {
-      "Error": {
+      },
+      "PaginatedContacts": {
         "type": "object",
-        "required": [
-          "status",
-          "message"
-        ],
         "properties": {
-          "status": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          },
+          "page": {
             "type": "integer"
           },
-          "message": {
-            "type": "string"
+          "perPage": {
+            "type": "integer"
           },
-          "data": {
-            "type": "object",
-            "nullable": true
+          "totalItems": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "hasNextPage": {
+            "type": "boolean"
           }
-        }
+        },
+        "required": [
+          "data",
+          "page",
+          "perPage",
+          "totalItems",
+          "totalPages",
+          "hasPreviousPage",
+          "hasNextPage"
+        ]
       }
     }
   }

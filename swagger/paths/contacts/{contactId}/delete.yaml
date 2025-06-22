@@ -2,6 +2,8 @@ delete:
   tags: [Contacts]
   summary: Delete a contact by ID
   operationId: deleteContact
+  security:
+    - bearerAuth: []
   parameters:
     - in: path
       name: contactId
@@ -11,7 +13,21 @@ delete:
   responses:
     '204':
       description: Successfully deleted a contact!
-    '404':
-      $ref: '../../../components/schemas/error.yaml#/Error'
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '../../../components/schemas/index.yaml#/components/schemas/Error'
     '401':
-      $ref: '../../../components/schemas/error.yaml#/Error'
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '../../../components/schemas/index.yaml#/components/schemas/Error'
+    '404':
+      description: Contact not found
+      content:
+        application/json:
+          schema:
+            $ref: '../../../components/schemas/index.yaml#/components/schemas/Error'

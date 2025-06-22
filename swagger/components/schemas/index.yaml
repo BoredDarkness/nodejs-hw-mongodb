@@ -42,3 +42,32 @@ components:
           type: string
           description: JWT access token
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…
+
+    # —————— Pagination schema ——————
+    PaginatedContacts:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
+        page:
+          type: integer
+        perPage:
+          type: integer
+        totalItems:
+          type: integer
+        totalPages:
+          type: integer
+        hasPreviousPage:
+          type: boolean
+        hasNextPage:
+          type: boolean
+      required:
+        - data
+        - page
+        - perPage
+        - totalItems
+        - totalPages
+        - hasPreviousPage
+        - hasNextPage

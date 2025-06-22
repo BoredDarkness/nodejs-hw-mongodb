@@ -2,12 +2,33 @@ post:
   tags: [Contacts]
   summary: Create a new contact
   operationId: createContact
+  security:
+    - bearerAuth: []
   requestBody:
     required: true
     content:
-      application/json:
+      multipart/form-data:
         schema:
-          $ref: '../../components/schemas/contact-input.yaml#/ContactInput'
+          type: object
+          required:
+            - name
+            - email
+            - phoneNumber
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+            phoneNumber:
+              type: string
+            isFavourite:
+              type: boolean
+            contactType:
+              type: string
+            photo:
+              type: string
+              format: binary
   responses:
     '201':
       description: Successfully created a contact!
@@ -23,8 +44,16 @@ post:
                 type: string
                 example: Successfully created a contact!
               data:
-                $ref: '../../components/schemas/contact.yaml#/Contact'
+                $ref: '../../components/schemas/index.yaml#/components/schemas/Contact'
     '400':
-      $ref: '../../components/schemas/error.yaml#/Error'
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'
     '401':
-      $ref: '../../components/schemas/error.yaml#/Error'
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/index.yaml#/components/schemas/Error'

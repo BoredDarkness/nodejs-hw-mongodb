@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
-export function signToken(payload, expiresIn) {
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
+export function generateResetToken(email) {
+  return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '5m' });
 }
 
-export function verifyToken(token) {
+export function verifyResetToken(token) {
   return jwt.verify(token, process.env.JWT_SECRET);
 }

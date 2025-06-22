@@ -11,22 +11,19 @@ const sessionSchema = new Schema(
       type: String,
       required: true,
     },
-    refreshToken: {
-      type: String,
-      required: true,
-    },
     accessTokenValidUntil: {
       type: Date,
       required: true,
     },
+
+    refreshToken: {
+      type: String,
+    },
     refreshTokenValidUntil: {
       type: Date,
-      required: true,
     },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
 export const Session = model('Session', sessionSchema);

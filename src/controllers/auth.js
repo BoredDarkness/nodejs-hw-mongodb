@@ -38,7 +38,7 @@ export async function login(req, res, next) {
       { expiresIn: '1h' },
     );
 
-    const validUntil = new Date(Date.now() + 1 * 60 * 60 * 1000);
+    const validUntil = new Date(Date.now() + 60 * 60 * 1000); // +1 год
     await Session.create({
       userId: user._id,
       accessToken: token,

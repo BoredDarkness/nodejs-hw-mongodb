@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import transport from '../services/mail.js';
 import { generateResetToken, verifyResetToken } from '../utils/jwt.js';
+import { Session } from '../models/session.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -22,25 +23,36 @@ export async function register(req, res) {
   });
 }
 
-export async function login(req, res) {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) throw createError(401, 'Email or password is wrong');
+export async function login(req, res, next) {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) throw createError(401, 'Email or password is wrong');
 
-  const passwordMatch = await bcrypt.compare(password, user.password);
-  if (!passwordMatch) throw createError(401, 'Email or password is wrong');
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) throw createError(401, 'Email or password is wrong');
 
-  const token = jwt.sign(
-    { id: user._id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' },
-  );
+    const token = jwt.sign(
+      { id: user._id.toString(), email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' },
+    );
 
-  res.json({
-    status: 200,
-    message: 'Login successful',
-    data: { token },
-  });
+    const validUntil = new Date(Date.now() + 1 * 60 * 60 * 1000);
+    await Session.create({
+      userId: user._id,
+      accessToken: token,
+      accessTokenValidUntil: validUntil,
+    });
+
+    res.status(200).json({
+      status: 200,
+      message: 'Login successful',
+      data: { token },
+    });
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function sendResetEmail(req, res, next) {
@@ -59,8 +71,7 @@ export async function sendResetEmail(req, res, next) {
       html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
     });
   } catch (err) {
-    console.error('💥 sendMail Error:', err);
-
+    console.error('sendMail Error:', err);
     return next(
       createError(500, 'Failed to send the email, please try again later.'),
     );
@@ -72,6 +83,7 @@ export async function sendResetEmail(req, res, next) {
     data: {},
   });
 }
+
 export async function resetPassword(req, res) {
   const { token, password } = req.body;
   let payload;

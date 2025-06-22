@@ -1,27 +1,28 @@
-import createHttpError from 'http-errors';
+import createError from 'http-errors';
 import { Session } from '../models/session.js';
-import { User } from '../models/user.js';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
-export default async function authentificate(req, res, next) {
+export default async function authenticateRefresh(req, res, next) {
   const header = req.headers.authorization || '';
   const [scheme, token] = header.split(' ');
   if (scheme !== 'Bearer' || !token) {
-    return next(createHttpError(401, 'Not authorized'));
+    return next(createError(401, 'Not authorized'));
   }
 
+  // Перевіряємо, чи є сесія
   const session = await Session.findOne({ accessToken: token });
   if (!session) {
-    return next(createHttpError(401, 'Not authorized'));
-  }
-  if (session.accessTokenValidUntil < new Date()) {
-    return next(createHttpError(401, 'Access token expired'));
+    return next(createError(401, 'Not authorized'));
   }
 
-  const user = await User.findById(session.userId).select('-password');
-  if (!user) {
-    return next(createHttpError(401, 'Not authorized'));
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return next(createError(401, 'Not authorized'));
   }
 
-  req.user = user;
+  req.token = token;
   next();
 }
